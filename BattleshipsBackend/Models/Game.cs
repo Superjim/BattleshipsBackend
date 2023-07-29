@@ -2,5 +2,57 @@
 {
 	public class Game
 	{
+		public Guid Id { get; set; }
+		public Player Player1 { get; set; }
+		public Player Player2 { get; set; }
+		public Player CurrentPlayer { get; set; }
+
+		public Game(Player player1, Player player2)
+		{
+			Id = Guid.NewGuid();
+			Player1 = player1;
+			Player2 = player2;
+			CurrentPlayer = player1;
+		}
+
+		public bool PlayTurn(Location target)
+		{
+			bool shotResult = CurrentPlayer == Player1
+							 ? TakeShot(Player2, target)
+							 : TakeShot(Player1, target);
+
+			if (shotResult)
+			{
+				CurrentPlayer = CurrentPlayer == Player1 ? Player2 : Player1;
+			}
+
+			return shotResult;
+		}
+
+		public bool TakeShot(Player targetPlayer, Location target)
+		{
+			if (CurrentPlayer == null)
+			{
+				throw new InvalidOperationException("ERROR: player not set");
+			}
+
+			bool shotResult = targetPlayer.Board.TakeShot(target);
+
+			return shotResult;
+		}
+
+		public Player? CheckWinCondition()
+		{
+			if (Player1.CheckAllShipsSunk())
+			{
+				return Player2;
+			}
+			else if (Player2.CheckAllShipsSunk())
+			{
+				return Player1;
+			}
+
+			return null;
+		}
 	}
 }

@@ -21,6 +21,19 @@
 			Ships.Add(ship);
 		}
 
+		public bool CheckAllShipsSunk()
+		{
+			foreach (var ship in Ships)
+			{
+				if (!ship.IsShipSunk())
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
+
 		// add ships at random locations
 		public void PlaceShips()
 		{
