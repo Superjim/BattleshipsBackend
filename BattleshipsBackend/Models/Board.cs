@@ -105,10 +105,13 @@ namespace BattleshipsBackend.Models
 					if (square.HasShotBeenTaken)
 					{
 						sb.Append(square.Ship != null ? 'H' : 'M');
+						sb.Append("  ");
 					}
 					else
 					{
-						sb.Append(square.Ship != null ? 'S' : 'E');
+						sb.Append(square.Ship != null ? square.Ship.Name[0] : '#');
+						sb.Append("  ");
+
 					}
 				}
 
@@ -117,5 +120,6 @@ namespace BattleshipsBackend.Models
 
 			return sb.ToString();
 		}
+
 	}
 }

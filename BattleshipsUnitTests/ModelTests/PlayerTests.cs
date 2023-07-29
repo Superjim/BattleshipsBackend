@@ -1,15 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
+using Xunit.Abstractions;
 using BattleshipsBackend.Models;
 
 namespace BattleshipsUnitTests.ModelTests
 {
 	public class PlayerTests
 	{
+		private readonly ITestOutputHelper _output;
+
+		public PlayerTests(ITestOutputHelper output)
+		{
+			_output = output;
+		}
+
 		[Fact]
 		public void PlayerCreatedWithNameId()
 		{
@@ -26,19 +31,58 @@ namespace BattleshipsUnitTests.ModelTests
 			Assert.Equal(id, player.Id);
 		}
 
-		//public void PlaceShips()
-		//{
-		//	//Arrange
-		//	var player = new Player("Jim", Guid.NewGuid(), 10);
-		//	var ship = new Ship("Submarine", 3);
-		//	var location = new Location(0, 0);
-		//	var orientation = Orientation.Vertical;
+		[Fact]
+		public void AllShipsPlaced()
+		{
+			// Arrange
+			var player = new Player("Jim", Guid.NewGuid(), 10);
+			var random = new Random();
 
-		//	//Act
-		//	player.PlaceShip(ship, location, orientation);
+			var ships = new List<Ship>
+	{
+		new Ship("Patrol Boat", 2, random.Next(2) == 0),
+		new Ship("Cruiser", 3, random.Next(2) == 0),
+		new Ship("Submarine", 3, random.Next(2) == 0),
+		new Ship("Battleship", 4, random.Next(2) == 0),
+		new Ship("Aircraft Carrier", 5, random.Next(2) == 0),
+	};
 
-		//	//Assert
-		//	//ship placed correctly
-		//}
+			foreach (var ship in ships)
+			{
+				player.AddShip(ship);
+			}
+
+			// Act
+			player.PlaceShips();
+
+			// print gamestate
+			var boardRepresentation = player.Board.PrintGrid();
+			_output.WriteLine(boardRepresentation);
+
+			// Assert
+			foreach (var ship in ships)
+			{
+				bool shipPlaced = false;
+				for (int i = 0; i < player.Board.Size; i++)
+				{
+					for (int j = 0; j < player.Board.Size; j++)
+					{
+						if (player.Board.Squares[i, j].Ship == ship)
+						{
+							shipPlaced = true;
+							break;
+						}
+					}
+
+					if (shipPlaced)
+					{
+						break;
+					}
+				}
+
+				Assert.True(shipPlaced);
+			}
+		}
+
 	}
 }
