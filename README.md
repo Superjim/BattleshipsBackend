@@ -1,6 +1,6 @@
 # BattleshipsBackend
 
-  Standard Output: 
+Standard Output: 
 P  P  #  #  #  #  #  #  #  #  
 #  #  #  #  #  #  #  #  #  #  
 A  #  C  C  C  #  #  #  #  #  
