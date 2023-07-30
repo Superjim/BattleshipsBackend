@@ -1,5 +1,8 @@
 # BattleshipsBackend
 
+
+
+```html
 <!-- Embedding Swagger UI -->
 <div id="swagger-ui"></div>
 <script>
@@ -11,6 +14,7 @@
     window.ui = ui;
   };
 </script>
+
 
 
 ```
