@@ -1,6 +1,6 @@
 # BattleshipsBackend
 
-![image](https://github.com/Superjim/BattleshipsBackend/assets/8917223/4e6aa032-10dd-4d67-b0fa-7cf4fe2c73d1)
+![image](https://github.com/Superjim/BattleshipsBackend/assets/8917223/be2569d7-9c4d-40e0-8fd9-b3f61644b8ca)
 
 
 ```
