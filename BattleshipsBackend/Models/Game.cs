@@ -2,10 +2,10 @@
 {
     public class Game
     {
-        public Guid Id { get; set; }
-        public Player Player1 { get; set; }
-        public Player Player2 { get; set; }
-        public Player CurrentPlayer { get; set; }
+        public Guid Id { get; private set; }
+        public Player Player1 { get; private set; }
+        public Player? Player2 { get; set; }
+        public Player CurrentPlayer { get; private set; }
 
         public Game(Player player1)
         {
@@ -14,8 +14,18 @@
             CurrentPlayer = player1;
         }
 
-        public bool PlayTurn(Location target)
+        public bool TakeShot(Player targetPlayer, Location location)
         {
+            return targetPlayer.Board.TakeShot(location);
+        }
+
+        public Player? PlayTurn(Guid playerId, Location target)
+        {
+            if (CurrentPlayer.Id != playerId)
+            {
+                throw new InvalidOperationException("It's not your turn");
+            }
+
             if (Player2 == null)
             {
                 throw new InvalidOperationException("Player 2 needs to join");
@@ -25,23 +35,12 @@
                              ? TakeShot(Player2, target)
                              : TakeShot(Player1, target);
 
-            CurrentPlayer = CurrentPlayer == Player1 ? Player2 : Player1;
-
-            CheckWinCondition();
-
-            return shotResult;
-        }
-
-        public bool TakeShot(Player targetPlayer, Location target)
-        {
-            if (CurrentPlayer == null)
+            if (shotResult)
             {
-                throw new InvalidOperationException("Error: no player");
+                CurrentPlayer = CurrentPlayer == Player1 ? Player2 : Player1;
             }
 
-            bool shotResult = targetPlayer.Board.TakeShot(target);
-
-            return shotResult;
+            return CheckWinCondition();
         }
 
         public Player? CheckWinCondition()
