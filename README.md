@@ -1,4 +1,18 @@
 # BattleshipsBackend
+
+<!-- Embedding Swagger UI -->
+<div id="swagger-ui"></div>
+<script>
+  window.onload = function () {
+    const ui = SwaggerUIBundle({
+      url: "https://raw.githubusercontent.com/Superjim/BattleshipsBackend/73c9dd3e6f4f3c146fe9318254501886058c1349/BattleshipsBackend/swagger.json",
+      dom_id: "#swagger-ui",
+    });
+    window.ui = ui;
+  };
+</script>
+
+
 ```
 Standard Output: 
 P  P  #  #  #  #  #  #  #  #  
