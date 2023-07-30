@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using BattleshipsBackend.Models;
+using System.Linq;
+using System;
 
 namespace BattleshipsBackend.Controllers
 {
@@ -10,27 +12,70 @@ namespace BattleshipsBackend.Controllers
     {
         private static List<Game> games = new List<Game>();
 
+        //GET list all games
+        [HttpGet]
+        public IActionResult Get()
+        {
+            var gameData = games.Select(game => new
+            {
+                game.Id,
+                Player1 = game.Player1?.Name,
+                Player2 = game.Player2?.Name
+            });
+
+            return Ok(gameData);
+        }
+
+        //GET a specific game
+        [HttpGet("{id}")]
+        public IActionResult Get(Guid id)
+        {
+            Game game = games.SingleOrDefault(g => g.Id == id);
+            if (game == null)
+            {
+                return NotFound("Game not found.");
+            }
+
+            return Ok(game);
+        }
+
         //POST create a game
         [HttpPost]
-        public IActionResult Post([FromBody] Player player)
+        public IActionResult Post([FromBody] Guid playerId)
         {
-            Game game = new Game(player, null);
+            if (!PlayerController.Players.TryGetValue(playerId, out Player player1))
+            {
+                return NotFound("Player not found.");
+            }
+
+            Game game = new Game(player1);
             games.Add(game);
             return Ok(game.Id);
         }
 
+
         //POST join a game
         [HttpPost("{id}/join")]
-        public IActionResult Join(Guid id, [FromBody] Player player)
+        public IActionResult Join(Guid id, [FromBody] Guid playerId)
         {
             Game game = games.SingleOrDefault(g => g.Id == id);
 
-            if (game == null)
+            if (!PlayerController.Players.TryGetValue(playerId, out Player player2))
             {
-                return NotFound();
+                return NotFound("Player not found");
             }
 
-            game.Player2 = player;
+            if (game == null)
+            {
+                return NotFound("Game not found");
+            }
+
+            if (game.Player1.Id == playerId)
+            {
+                return BadRequest("Game creator cannot join as player 2");
+            }
+
+            game.Player2 = player2;
             return Ok();
         }
 
@@ -42,7 +87,7 @@ namespace BattleshipsBackend.Controllers
 
             if (game == null)
             {
-                return NotFound();
+                return NotFound("Game not found.");
             }
 
             bool isHit = game.PlayTurn(target);
