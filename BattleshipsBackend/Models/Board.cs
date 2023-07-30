@@ -84,20 +84,9 @@ namespace BattleshipsBackend.Models
             }
 
             //take a valid shot on the square
-            bool isShipHit = Squares[location.Row][location.Column].MarkShotAndHitShip();
-
-            // if a ship is hit, add the hit to the ship
-            if (isShipHit)
-            {
-                var ship = Squares[location.Row][location.Column].Ship;
-                if (ship != null)
-                {
-                    ship.AddHit();
-                }
-            }
-
-            return isShipHit;
+            return Squares[location.Row][location.Column].MarkShotAndHitShip();
         }
+
 
         //testing helper 
         public string PrintGrid()

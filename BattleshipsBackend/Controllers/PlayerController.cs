@@ -22,9 +22,23 @@ namespace BattleshipsBackend.Controllers
                 return BadRequest("Please enter a name");
             }
             Player player = new Player(name, Guid.NewGuid(), 10);
+
+            player.AddShip(new Ship("Aircraft Carrier", 5, GetRandomBoolean()));
+            player.AddShip(new Ship("Battleship", 4, GetRandomBoolean()));
+            player.AddShip(new Ship("Cruiser", 3, GetRandomBoolean()));
+            player.AddShip(new Ship("Submarine", 3, GetRandomBoolean()));
+            player.AddShip(new Ship("Patrol Boat", 2, GetRandomBoolean()));
+
+            player.PlaceShips();
+
             Players[player.Id] = player;
 
             return Ok(player.Id);
+        }
+
+        private bool GetRandomBoolean()
+        {
+            return new Random().Next(0, 2) == 0;
         }
 
         //GET all players
