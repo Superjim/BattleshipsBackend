@@ -10,6 +10,7 @@ namespace BattleshipsBackend.Controllers
     [ApiController]
     public class GameController : ControllerBase
     {
+        // store list of games
         private static List<Game> games = new List<Game>();
 
         //GET list all games
@@ -18,6 +19,7 @@ namespace BattleshipsBackend.Controllers
         {
             var gameData = games.Select(game => new
             {
+                // return only gameId, and joined playersId
                 game.Id,
                 Player1 = game.Player1?.Name,
                 Player2 = game.Player2?.Name
@@ -26,7 +28,7 @@ namespace BattleshipsBackend.Controllers
             return Ok(gameData);
         }
 
-        //GET a specific game
+        //GET a specific game by ID
         [HttpGet("{id}")]
         public IActionResult Get(Guid id)
         {
@@ -39,10 +41,11 @@ namespace BattleshipsBackend.Controllers
             return Ok(game);
         }
 
-        //POST create a game
+        //POST create a game with player1 guid as body
         [HttpPost]
         public IActionResult Post([FromBody] Guid playerId)
         {
+            // check player exists
             if (!PlayerController.Players.TryGetValue(playerId, out Player player1))
             {
                 return NotFound("Player not found.");
@@ -54,10 +57,11 @@ namespace BattleshipsBackend.Controllers
         }
 
 
-        //POST join a game
+        //POST player2 joins a game with playerId
         [HttpPost("{id}/join")]
         public IActionResult Join(Guid id, [FromBody] Guid playerId)
         {
+            // find the game by ID
             Game game = games.SingleOrDefault(g => g.Id == id);
 
             if (!PlayerController.Players.TryGetValue(playerId, out Player player2))
@@ -79,7 +83,7 @@ namespace BattleshipsBackend.Controllers
             return Ok();
         }
 
-        //POST play a turn
+        // POST play a turn
         [HttpPost("{id}/playturn")]
         public IActionResult PlayTurn(Guid id, [FromBody] PlayTurnRequest request)
         {
@@ -101,8 +105,14 @@ namespace BattleshipsBackend.Controllers
             // store the opposing player of the one making the turn
             Player targetPlayer = game.CurrentPlayer == game.Player1 ? game.Player2 : game.Player1;
 
-            // store if shot is hit or miss
-            bool shotResult = game.TakeShot(targetPlayer, request.Target);
+            // Check if a shot has already been taken
+            if (targetPlayer.Board.Squares[request.Target.Row][request.Target.Column].HasShotBeenTaken)
+            {
+                return BadRequest("This shot has already been taken");
+            }
+
+            // take the shot and store the result
+            bool hit = targetPlayer.Board.TakeShot(request.Target);
 
             // check if any player has won
             Player? winner = game.CheckWinCondition();
@@ -117,7 +127,7 @@ namespace BattleshipsBackend.Controllers
             game.CurrentPlayer = targetPlayer;
 
             // if hit, return hit
-            if (shotResult)
+            if (hit)
             {
                 return Ok("Hit");
             }
@@ -125,6 +135,7 @@ namespace BattleshipsBackend.Controllers
             // else return miss
             return Ok("Miss");
         }
+
 
 
 
