@@ -17,8 +17,8 @@ namespace BattleshipsBackend
                     Description = "API for Battleships game",
                     Contact = new OpenApiContact
                     {
-                        Name = "Your Name",
-                        Email = "your.email@example.com"
+                        Name = "Jim Jenkinson",
+                        Email = "jamesjenkinson10@gmail.com"
                     }
                 });
             });
