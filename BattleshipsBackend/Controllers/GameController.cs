@@ -83,21 +83,51 @@ namespace BattleshipsBackend.Controllers
         [HttpPost("{id}/playturn")]
         public IActionResult PlayTurn(Guid id, [FromBody] PlayTurnRequest request)
         {
+            // search game by gameID
             Game game = games.SingleOrDefault(g => g.Id == id);
 
+            // if game doesnt exist, 404 NotFound
             if (game == null)
             {
                 return NotFound("Game not found.");
             }
 
-            Player? winner = game.PlayTurn(request.PlayerId, request.Target);
-            if (winner != null)
+            // if playerID doesnt match currentPlayerId, error 400 BadRequest
+            if (game.CurrentPlayer.Id != request.PlayerId)
             {
-                return Ok($"Player {winner.Name} has won!");
+                return BadRequest("It's not your turn");
             }
 
-            return Ok("Turn success");
+            // store the opposing player of the one making the turn
+            Player targetPlayer = game.CurrentPlayer == game.Player1 ? game.Player2 : game.Player1;
+
+            // store if shot is hit or miss
+            bool shotResult = game.TakeShot(targetPlayer, request.Target);
+
+            // check if any player has won
+            Player? winner = game.CheckWinCondition();
+
+            // if winner, return winner
+            if (winner != null)
+            {
+                return Ok($"{winner.Name} has won!");
+            }
+
+            // swap currentPlayer
+            game.CurrentPlayer = targetPlayer;
+
+            // if hit, return hit
+            if (shotResult)
+            {
+                return Ok("Hit");
+            }
+
+            // else return miss
+            return Ok("Miss");
         }
+
+
+
 
     }
 }
