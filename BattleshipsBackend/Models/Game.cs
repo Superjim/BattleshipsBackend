@@ -5,7 +5,7 @@
         public Guid Id { get; private set; }
         public Player Player1 { get; private set; }
         public Player? Player2 { get; set; }
-        public Player CurrentPlayer { get; private set; }
+        public Player CurrentPlayer { get; set; }
 
         public Game(Player player1)
         {
