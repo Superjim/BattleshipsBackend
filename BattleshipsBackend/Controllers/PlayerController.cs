@@ -13,7 +13,7 @@ namespace BattleshipsBackend.Controllers
         // store players in dictionary
         public static Dictionary<Guid, Player> Players { get; private set; } = new Dictionary<Guid, Player>();
 
-        // POST: api/player
+        // POST: api/Player
         [HttpPost]
         public IActionResult Post([FromBody] string name)
         {
@@ -44,7 +44,7 @@ namespace BattleshipsBackend.Controllers
             return new Random().Next(0, 2) == 0;
         }
 
-        // GET: api/player
+        // GET: api/Player
         [HttpGet]
         public IActionResult Get()
         {
