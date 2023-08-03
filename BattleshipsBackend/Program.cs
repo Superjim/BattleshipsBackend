@@ -8,7 +8,9 @@ builder.Services.AddCors(options =>
     {
         builder.WithOrigins(
             "http://localhost:3000", // localhost
-            "https://jim-battleships.netlify.app/" // prod
+                        "http://localhost:3000/", // localhost with /
+            "https://jim-battleships.netlify.app", // prod
+            "https://jim-battleships.netlify.app/" // prod with /
         )
         .AllowAnyHeader()
         .AllowAnyMethod()
